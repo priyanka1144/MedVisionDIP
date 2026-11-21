@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedVision DIP — Medical Image Enhancement System</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="18" stroke="var(--cyan)" stroke-width="1.5" stroke-dasharray="4 2"/>
+            <path d="M20 8 L20 32 M8 20 L32 20" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="20" cy="20" r="5" fill="var(--cyan)" opacity="0.3"/>
+            <circle cx="20" cy="20" r="2" fill="var(--cyan)"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">MedVision<span class="logo-dip">DIP</span></span>
+          <span class="logo-sub">Digital Image Processing System</span>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <span class="nav-badge">v2.0</span>
+        <span class="nav-badge accent">Research Edition</span>
+        <div class="status-dot"></div>
+        <span class="status-text">System Ready</span>
+      </nav>
+    </div>
+  </header>
+
+  
+  <section class="hero-section">
+    <div class="hero-content">
+      <p class="hero-label">Final Year University Project · Computer Vision</p>
+      <h1 class="hero-title">Medical Image<br/><span class="highlight">Enhancement Pipeline</span></h1>
+      <p class="hero-desc">Upload X-Ray, MRI, CT Scan or Bone Scan imagery and process it through a complete DIP pipeline — Laplacian sharpening, Sobel edge detection, masking, and gamma correction.</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">8</span><span class="stat-label">Pipeline Stages</span></div>
+        <div class="stat"><span class="stat-num">5×5</span><span class="stat-label">Averaging Kernel</span></div>
+        <div class="stat"><span class="stat-num">Real-time</span><span class="stat-label">Gamma Correction</span></div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="upload-section">
+    <div class="container">
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-inner">
+          <div class="upload-icon-wrap">
+            <svg class="upload-icon" viewBox="0 0 64 64" fill="none">
+              <rect x="8" y="16" width="48" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M32 42 L32 26 M24 34 L32 26 L40 34" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M20 52 L44 52" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+            </svg>
+          </div>
+          <h3 class="upload-title">Drop Medical Image Here</h3>
+          <p class="upload-hint">Supports X-Ray · MRI · CT Scan · Bone Scan · PNG · JPG · TIFF</p>
+          <label class="btn-upload" for="fileInput">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="16"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/></svg>
+            Choose Image File
+          </label>
+          <input type="file" id="fileInput" accept="image/*" hidden />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="control-panel" id="controlPanel" style="display:none">
+    <div class="container">
+      <div class="panel-grid">
+
+       
+        <div class="glass-card preview-card">
+          <div class="card-header">
+            <span class="card-badge">INPUT</span>
+            <h3 class="card-title">Original Image</h3>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="originalCanvas"></canvas>
+          </div>
+          <div class="image-info" id="imageInfo"></div>
+        </div>
+
+       
+        <div class="glass-card controls-card">
+          <div class="card-header">
+            <span class="card-badge accent">CONTROLS</span>
+            <h3 class="card-title">Processing Options</h3>
+          </div>
+
+          <div class="control-group">
+            <label class="ctrl-label">
+              <svg viewBox="0 0 16 16" fill="currentColor" width="14"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM0 8a8 8 0 1116 0A8 8 0 010 8z"/><path d="M8 4a.5.5 0 01.5.5v3.25l2.5 1.5a.5.5 0 01-.5.866L7.5 8.5V4.5A.5.5 0 018 4z"/></svg>
+              Gamma (γ) Correction
+            </label>
+            <div class="slider-wrap">
+              <span class="slider-min">0.1</span>
+              <input type="range" id="gammaSlider" min="0.1" max="3.0" step="0.05" value="1.0" class="slider" />
+              <span class="slider-max">3.0</span>
+            </div>
+            <div class="slider-value-row">
+              <span>γ = <strong id="gammaValue">1.00</strong></span>
+              <span class="slider-hint">Real-time update</span>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-primary" id="processBtn">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="16"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+              Run Enhancement Pipeline
+            </button>
+            <button class="btn-secondary" id="resetBtn">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="16"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+              Reset
+            </button>
+          </div>
+          <button class="btn-download" id="downloadBtn" disabled>
+            <svg viewBox="0 0 20 20" fill="currentColor" width="16"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            Download Enhanced Image
+          </button>
+
+         
+          <div class="progress-wrap" id="progressWrap" style="display:none">
+            <div class="progress-label">
+              <span id="progressText">Processing…</span>
+              <span id="progressPct">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-steps" id="progressSteps"></div>
+          </div>
+        </div>
+
+     
+        <div class="glass-card histogram-card">
+          <div class="card-header">
+            <span class="card-badge">ANALYSIS</span>
+            <h3 class="card-title">Intensity Histogram</h3>
+          </div>
+          <canvas id="histogramCanvas" width="340" height="160"></canvas>
+          <div class="hist-labels">
+            <span>0 (Black)</span><span>Pixel Intensity</span><span>255 (White)</span>
+          </div>
+        </div>
+
+      </div><!-- /panel-grid -->
+    </div>
+  </section>
+
+  
+  <section class="pipeline-section" id="pipelineSection" style="display:none">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="title-line"></span>
+          Processing Pipeline
+          <span class="title-line"></span>
+        </h2>
+        <p class="section-desc">Each stage of the DIP enhancement pipeline visualised below</p>
+      </div>
+
+      <div class="pipeline-flow">
+        <!-- Stage arrows rendered by JS -->
+        <div class="stages-grid" id="stagesGrid">
+          <!-- Cards injected by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="compare-section" id="compareSection" style="display:none">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="title-line"></span>
+          Before vs After
+          <span class="title-line"></span>
+        </h2>
+        <p class="section-desc">Drag the slider to compare original vs final enhanced image</p>
+      </div>
+
+      <div class="compare-wrap glass-card">
+        <div class="compare-container" id="compareContainer">
+          <canvas id="compareOriginal" class="compare-canvas"></canvas>
+          <canvas id="compareFinal" class="compare-canvas compare-overlay"></canvas>
+          <div class="compare-slider" id="compareSlider">
+            <div class="slider-handle">
+              <svg viewBox="0 0 24 24" fill="none" width="20">
+                <path d="M8 5l-5 7 5 7M16 5l5 7-5 7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="slider-line"></div>
+          </div>
+          <div class="compare-label-left">ORIGINAL</div>
+          <div class="compare-label-right">ENHANCED</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ 
+  <section class="technique-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="title-line"></span>
+          Applied Techniques
+          <span class="title-line"></span>
+        </h2>
+      </div>
+      <div class="technique-grid">
+        <div class="tech-card">
+          <div class="tech-num">01</div>
+          <h4>Laplacian Sharpening</h4>
+          <p>Second-order derivative filter to enhance fine structural detail in medical imagery.</p>
+          <code class="kernel-display">[ 0, -1,  0]<br/>[-1,  4, -1]<br/>[ 0, -1,  0]</code>
+        </div>
+        <div class="tech-card">
+          <div class="tech-num">02</div>
+          <h4>Sobel Edge Detection</h4>
+          <p>Gradient-based operator computing Gx and Gy to find anatomical boundaries.</p>
+          <code class="kernel-display">Gx: [-1,0,1;-2,0,2;-1,0,1]<br/>Gy: [1,2,1;0,0,0;-1,-2,-1]</code>
+        </div>
+        <div class="tech-card">
+          <div class="tech-num">03</div>
+          <h4>5×5 Averaging Filter</h4>
+          <p>Spatial domain low-pass filter for noise suppression before mask creation.</p>
+          <code class="kernel-display">1/25 × ones(5×5)</code>
+        </div>
+        <div class="tech-card">
+          <div class="tech-num">04</div>
+          <h4>Enhancement Mask</h4>
+          <p>Structural mask combining Sobel edges with smoothed image for selective boosting.</p>
+          <code class="kernel-display">Mask = Sobel × Smoothed</code>
+        </div>
+        <div class="tech-card">
+          <div class="tech-num">05</div>
+          <h4>Final Composite</h4>
+          <p>Enhanced image formed by adding the structural mask back to the original.</p>
+          <code class="kernel-display">Final = Original + Mask</code>
+        </div>
+        <div class="tech-card">
+          <div class="tech-num">06</div>
+          <h4>Gamma Correction</h4>
+          <p>Power-law intensity transformation for brightness and contrast tuning.</p>
+          <code class="kernel-display">s = c · r<sup>γ</sup></code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ 
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-title small">MedVision<span class="logo-dip">DIP</span></span>
+        <p>Digital Image Processing · Medical Image Enhancement System</p>
+      </div>
+      <div class="footer-info">
+        <p>Final Year University Project</p>
+        <p>Computer Vision & Digital Image Processing</p>
+        <p>Implemented with Canvas API · Zero external dependencies</p>
+      </div>
+      <div class="footer-tech">
+        <span class="tech-tag">HTML5</span>
+        <span class="tech-tag">CSS3</span>
+        <span class="tech-tag">Vanilla JS</span>
+        <span class="tech-tag">Canvas API</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Built with precision for academic excellence — All image processing implemented from scratch</p>
+    </div>
+  </footer>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loadingOverlay" style="display:none">
+    <div class="loading-content">
+      <div class="loading-rings">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="loading-cross"></div>
+      </div>
+      <p class="loading-text" id="loadingText">Initializing pipeline…</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
